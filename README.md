@@ -1,70 +1,85 @@
-# Getting Started with Create React App
+# Input Component with Imperative Focus Handling
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project demonstrates a basic React component that uses `useImperativeHandle` to expose a custom imperative method for focusing an input field.
 
-## Available Scripts
+## Project Structure
 
-In the project directory, you can run:
+The project consists of a single React component:
 
-### `npm start`
+- **Input Component (`Input.js`)**: This component encapsulates an `<input>` element and uses `useImperativeHandle` to expose a `focus()` method.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Input Component Details
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### File: `Input.js`
 
-### `npm test`
+```javascript
+import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+const Input = forwardRef((props, ref) => {
+  const inputRef = useRef();
 
-### `npm run build`
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current.focus();
+      console.log('Input is in focus');
+    }
+  }));
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  return <input ref={inputRef} {...props} placeholder="Type here" />;
+});
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+export default Input;
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Explanation:
 
-### `npm run eject`
+- **`useRef`**: Used to create a reference (`inputRef`) that will be attached to the `<input>` element.
+- **`useImperativeHandle`**: Hook that allows the component to expose certain functions or properties to parent components when using `ref`.
+  - Here, it exposes a `focus()` method that triggers focus on the `<input>` element and logs a message to the console.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## App Component Details
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### File: `App.js`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```javascript
+import React, { useRef } from 'react';
+import Input from './Input';
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+const App = () => {
+  const inputRef = useRef(null);
 
-## Learn More
+  return (
+    <div>
+      <Input ref={inputRef} />
+      <button onClick={() => inputRef.current.focus()}>Focus Input</button>
+    </div>
+  );
+};
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export default App;
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Explanation:
 
-### Code Splitting
+- **`useRef`**: Creates a reference (`inputRef`) that will be used to call the `focus()` method of the `<Input>` component.
+- **`onClick` Handler**: Triggers the `focus()` method of the `<Input>` component when the button is clicked.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## How to Run
 
-### Analyzing the Bundle Size
+To run the project:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. Clone the repository.
+2. Navigate to the project directory.
+3. Install dependencies: `npm install` or `yarn install`.
+4. Start the development server: `npm start` or `yarn start`.
+5. Open your browser and go to `http://localhost:3000` to view the app.
 
-### Making a Progressive Web App
+## Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- This project demonstrates how to use `useImperativeHandle` to control child components imperatively from parent components.
+- The `Input` component encapsulates an `<input>` element and exposes a `focus()` method to focus the input programmatically.
+- This setup is useful when you need to manage focus or other imperative actions from a parent component without exposing the internal implementation details of the child component.
 
-### Advanced Configuration
+## What you will experience
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<img width="1436" alt="Captura de pantalla 2024-07-24 a la(s) 12 49 18" src="https://github.com/user-attachments/assets/0f7bdfcb-c3f3-4314-845f-e12af2763b79">
